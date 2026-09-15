@@ -10,7 +10,12 @@ window.AtlesAnalytics=(()=>{
   function route(){
     if(location.pathname.endsWith('mapa-o11y-atos.html'))return 'mapa';
     const h=location.hash.slice(1).split('?')[0];
-    return /^(home|atlas(?:\/[A-G])?|architecture|sources|selection|about|scope|guide|privacy|(?:card|meeting)\/[A-G][1-8])$/.test(h)?h:'home';
+    const parts=h.split('/');
+    if(parts[0]==='context'&&['actors','processes','coverage','guide','architecture'].includes(parts[1])){
+      const known=parts[1]==='actors'?window.ATLES_MODEL?.roles:parts[1]==='processes'?window.ATLES_MODEL?.processes:[];
+      return 'context/'+parts[1]+(parts[2]&&known?.some(x=>x.id===parts[2])?'/'+parts[2]:'');
+    }
+    return /^(home|atlas(?:\/[A-G])?|architecture|sources|selection|about|scope|guide|(?:card|meeting)\/[A-G][1-8])$/.test(h)?h:'home';
   }
   const path=()=>route()==='mapa'?'/o11y-atos-ctti/mapa-o11y-atos.html':'/o11y-atos-ctti/#'+route();
   const title=()=>route()==='mapa'?'MapaO11yAtos':'Atles O11y · '+route();
@@ -34,7 +39,7 @@ window.AtlesAnalytics=(()=>{
     const el=e.target.closest('a,button,[data-action]');if(!el)return;
     const a=el.dataset.action;
     if(['export-brief','export-session'].includes(a))event(a==='export-brief'?'exporta_proposta':'exporta_sessio');
-    if(el.dataset.tab&&['idea','pilot','evidence','tender'].includes(el.dataset.tab))event('consulta_apartat',{fitxa:route().split('/')[1]||'',apartat:el.dataset.tab});
+    if(el.dataset.tab&&['idea','pilot','evidence','tender','session'].includes(el.dataset.tab))event('consulta_apartat',{fitxa:route().split('/')[1]||'',apartat:el.dataset.tab});
     if(el.dataset.filter&&/^(all|[A-G])$/.test(el.dataset.filter))event('filtra_ambit',{ambit:el.dataset.filter});
     if(el.dataset.copy)event('copia_proposta',{fitxa:el.dataset.copy});
     if(el.id==='fullscreen')event('pantalla_completa');
