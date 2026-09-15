@@ -1,8 +1,5 @@
-* text=auto
-*.html text eol=lf
-*.css text eol=lf
-*.js text eol=lf
-*.svg text eol=lf
+# Generated static assets: preserve their published bytes.
+* -text
 *.pdf binary
 *.png binary
 *.ico binary
